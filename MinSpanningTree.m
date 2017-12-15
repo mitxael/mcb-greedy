@@ -34,19 +34,18 @@ En = [(1:m)',E];                        % add the numbers
 En(:,2:3) = sort(En(:,2:3)')';          % edges on increase order
 ln = find(En(:,2)==En(:,3));            % the loops numbers
 En = En(setdiff([1:size(En,1)]',ln),:); % remove the loops
-[w,iw] = sort(En(:,4));                 % sort by weight
+[w,iw] = sort(En(:,4));                 % sort by weight in non-increasing order
 Ens = En(iw,:);                         % sorted edges
 
 %%% BUILD GREEDY MST %%%
 Emst = Ens(1,:);                        % 1st edge include to minimal spanning tree
 Ens = Ens(2:end,:);                     % rested edges
-while (size(Emst,1)<n-1)&(~isempty(Ens))
+while (size(Emst,1)<n-1)&&(~isempty(Ens))
   Emst = [Emst;Ens(1,:)];               % add next edge to spanning tree
   Ens = Ens(2:end,:);                   % rested edges
-  if any((Emst(end,2)== Emst(1:end-1,2))&...
-         (Emst(end,3)== Emst(1:end-1,3))) | ...
-     IsCycle(Emst(:,2:3))               % the multiple edge or cycle
-    Emst = Emst(1:end-1,:);             % we delete the last added edge
+  if any((Emst(end,2)== Emst(1:end-1,2))&(Emst(end,3)== Emst(1:end-1,3)))...
+         | (IsCycle(Emst(:,2:3)))      % the multiple edge or cycle
+    Emst = Emst(1:end-1,:);             % Remove the last added edge
   end
 end
 MST = Emst(:,1);                        % vector of numbers of edges

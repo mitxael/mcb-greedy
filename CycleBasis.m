@@ -20,9 +20,11 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function MCB = CycleBasis(E, MST)
+function MCB = CycleBasis(G)
 
 %%% DATA PREPARATION %%%
+E = G.Edges{:, {'EndNodes','Weight'}};
+MST = MinSpanningTree(E);
 E = sort(E(:,1:2)')';                                   % only number of vertexes
 m = size(E,1);                                          % number of edges
 n = max(max(E));                                        % number of vertexes

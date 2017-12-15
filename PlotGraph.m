@@ -20,10 +20,17 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function p = PlotGraph(G)
+function p = PlotGraph(G, opt, u, v)
 
 %%% GRAPH CUSTOM PLOT %%%
 p = plot(G);
+
+if (opt == 0)
+    [T,q] = minspantree(G);
+else
+    T = shortestpath(G, u, v, 'Method', 'positive');
+    disp(T);
+end
 
 if (numnodes(G) <= 20)
     p.EdgeLabel = G.Edges.Weight;
@@ -37,6 +44,7 @@ if (numnodes(G) <= 20)
     yd = get(p, 'YData');
     text(xd, yd, nl, 'Color', [0.500, 0.001, 0.001], 'FontWeight', 'bold', ...
         'FontSize',9, 'HorizontalAlignment','Left', 'VerticalAlignment','Top');
+    highlight(p,T,'EdgeColor','r','LineWidth',1.5);
 elseif (numnodes(G) <= 40)
     p.EdgeLabel = G.Edges.Weight;
     p.LineWidth = 0.750;
@@ -49,6 +57,7 @@ elseif (numnodes(G) <= 40)
     yd = get(p, 'YData');
     text(xd, yd, nl, 'Color', [0.500, 0.001, 0.001], 'FontWeight', 'bold', ...
         'FontSize',7, 'HorizontalAlignment','Left', 'VerticalAlignment','Top');
+    highlight(p,T,'EdgeColor','r','LineWidth',1);
 else %(numnodes(G) > 40)
     p.LineWidth = 0.500;
     p.NodeColor = [0.500, 0.001, 0.001];
@@ -60,6 +69,7 @@ else %(numnodes(G) > 40)
     yd = get(p, 'YData');
     text(xd, yd, nl, 'FontWeight', 'bold', 'FontSize',8, ...
         'HorizontalAlignment', 'Left', 'VerticalAlignment','Top');
+    highlight(p,T,'EdgeColor','r','LineWidth',0.75);
 end
 
 return
