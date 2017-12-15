@@ -41,7 +41,8 @@ p = PlotGraph(G,0,0,0);
 %%v = G.numnodes;
 %%p = PlotGraph(G,1,u,v);
 
-MCB = CycleBasis(G);
+%FCB = FundamentalCycleBasis(G);
+MCB = MinimumCycleBasis(G);
 
 %%%Detailed view of MCB
 E = G.Edges{:, {'EndNodes','Weight'}};

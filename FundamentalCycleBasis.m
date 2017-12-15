@@ -1,10 +1,10 @@
 %{
     ***************************************************************************************
-    * Abstract:   Determine Minimal Cycle Basis of a Graph (weighted & undirected)
+    * Abstract:   Determine Fundamental Cycle Basis of a Graph (weighted & undirected)
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
-    * History:    V1.0 - Determine the MCB from Edges represented as Adjacency Lists
+    * History:    V1.0 - Determine a FCB from Edges represented as Adjacency Lists
     ********************************* START LICENSE BLOCK *********************************
     * The MIT License (MIT)
     * Copyright (C) 2017 Michael Vasquez Otazu
@@ -20,7 +20,7 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function MCB = CycleBasis(G)
+function MCB = FundamentalCycleBasis(G)
 
 %%% DATA PREPARATION %%%
 E = G.Edges{:, {'EndNodes','Weight'}};
