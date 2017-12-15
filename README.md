@@ -3,7 +3,7 @@
     * Uses:       This library has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
-    * History:    V1.0 - Determine the MCB from a graph imported from a text file
+    * History:    V1.0 - First release
     * Description:
     *             - This project is a library developed in Matlab to calculate the 
                     Minimal Cycle Basis of a Graph.
