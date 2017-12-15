@@ -48,7 +48,7 @@ E = G.Edges{:, {'EndNodes','Weight'}};
 En = [(1:G.numedges)',E]; 
 [rows,cols] = size(MCB); 
 MCB_show = string([MCB;(1:cols)]);
-
+MCB_weight = 0;
 for j = 1:cols
     w = 0;
     for i = 1:rows
@@ -58,7 +58,9 @@ for j = 1:cols
         end
     end
 	MCB_show(i+1,j) = string(w);
+    MCB_weight = MCB_weight + w;
 end
 
 MCB_show = MCB_show';
 MCB_show = circshift(MCB_show, [0 -rows]);
+clear cols E En filename i j MCB p path rows w
