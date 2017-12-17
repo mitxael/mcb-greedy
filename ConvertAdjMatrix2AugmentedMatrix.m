@@ -1,11 +1,10 @@
 %{
     ***************************************************************************************
-    * Abstract:   Import Graph from a text file using Matlab
+    * Abstract:   Returns a Weight-augmented Matrix of edges from an AdjacencyMatrix
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
-    * History:    V1.0 - Import a graph (undirected and weighted) from a text file 
-                  containing an adjacency list from the third line onwards.
+    * History:    V1.0 - first release
     ********************************* START LICENSE BLOCK *********************************
     * The MIT License (MIT)
     * Copyright (C) 2017 Michael Vasquez Otazu
@@ -21,27 +20,31 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function G = ImportGraph(path, filename)
+function AugMatrix = ConvertAdjMatrix2AugmentedMatrix(G, AdjMatrix)
 
-G = graph(zeros(0,0));                                          % create empty graph
+%% PREPARE DATA
+E = G.Edges{:, {'EndNodes','Weight'}};
+En = [(1:G.numedges)',E]; 
+[rows,cols] = size(AdjMatrix); 
+AdjMatrix_weighted = [AdjMatrix (1:rows)'];
 
-%% OPEN FILE
-fid = fopen(strcat(path,filename));
-
-%% READ GRAPH SIZE
-m = fgets(fid);                                                 % number of nodes
-n = fgets(fid);                                                 % number of edges
-
-%% IMPORT DATA
-while ~feof(fid)                                                % read and add edges to G
-    edge = textscan(fid,'%d %d %f *[^\n]','Delimiter','\b');
-    u = edge{1}+1;
-    v = edge{2}+1;
-    w = edge{3}*100;
-    G = addedge(G, u, v, w);
+%% SET WEIGHTS
+for i = 1:rows
+    w = 0;
+    for j = 1:cols
+        if (AdjMatrix(i,j) > 0)
+            idx = find( ((En(:,2)==j) & (En(:,3)==AdjMatrix(i,j))) | ((En(:,2)==AdjMatrix(i,j)) & (En(:,3)==j)) );
+            w = w + En(idx,4); 
+        end
+    end
+    AdjMatrix_weighted(i,j+1) = string(w);
 end
 
-%% CLOSE FILE
-fclose(fid);
+%% SORT AUGMENTED MATRIX BY WEIGHT IN NON-INCREASING ORDER
+AdjMatrix_sorted = sortrows(AdjMatrix_weighted, j+1);
+%AugMatrix = CS_tmp(:,1:j); % Remove cycle weights
+AugMatrix = AdjMatrix_sorted;
 
 return
+
+end

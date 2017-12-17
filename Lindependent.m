@@ -1,11 +1,10 @@
 %{
     ***************************************************************************************
-    * Abstract:   Import Graph from a text file using Matlab
+    * Abstract:   Get a linearly independent set of columns from a matrix X
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
-    * History:    V1.0 - Import a graph (undirected and weighted) from a text file 
-                  containing an adjacency list from the third line onwards.
+    * History:    V1.0 - first release
     ********************************* START LICENSE BLOCK *********************************
     * The MIT License (MIT)
     * Copyright (C) 2017 Michael Vasquez Otazu
@@ -21,27 +20,48 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function G = ImportGraph(path, filename)
+function [Xsub,Xidx] = Lindependent(X,tol)
+ 
+%% Check if X has no non-zeros and hence no independent columns
+if ~nnz(X)
+     Xsub=[]; Xidx=[];
+     return
+ end
+ 
+%%  Set tol, the rank estimation tolerance (default=1e-10)
+if nargin<2, tol=1e-10; end
 
-G = graph(zeros(0,0));                                          % create empty graph
+%% Orthogonal-triangular-decomposition so that  X*E = Q*R
+% Unitary Q, Upper-triangular R, Permutation E
+[Q, R, E] = qr(X,0); 
 
-%% OPEN FILE
-fid = fopen(strcat(path,filename));
+%% Estimate the rank of the independent set
+if ~isvector(R)
+	diagr = abs(diag(R)); % Diagonal matrix of R (with ABSolute values)
+else
+	diagr = R(1);   
+end
+r = find(diagr >= tol*diagr(1), 1, 'last');
 
-%% READ GRAPH SIZE
-m = fgets(fid);                                                 % number of nodes
-n = fgets(fid);                                                 % number of edges
-
-%% IMPORT DATA
-while ~feof(fid)                                                % read and add edges to G
-    edge = textscan(fid,'%d %d %f *[^\n]','Delimiter','\b');
-    u = edge{1}+1;
-    v = edge{2}+1;
-    w = edge{3}*100;
-    G = addedge(G, u, v, w);
+%% Select linearly-independent columns
+[rows, cols] = size(X);
+elemN = 1;
+idx = 1;
+Xsub = zeros(rows,0);
+Xidx = [];
+while (elemN < r & idx < cols)
+    if R(rows, idx) == 0
+        tmp = X(:,idx);
+        Xsub = [Xsub tmp];
+        Xidx = [Xidx idx];
+        elemN = elemN + 1;
+    end
+    idx = idx + 1;
 end
 
-%% CLOSE FILE
-fclose(fid);
+%Xidx = sort(E(1:r));
+%Xsub = X(:,Xidx);
 
 return
+
+end

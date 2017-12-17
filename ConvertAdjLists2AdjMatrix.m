@@ -1,11 +1,10 @@
 %{
     ***************************************************************************************
-    * Abstract:   Import Graph from a text file using Matlab
+    * Abstract:   Returns an Adjacency Matrix from Adjacency Lists
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
-    * History:    V1.0 - Import a graph (undirected and weighted) from a text file 
-                  containing an adjacency list from the third line onwards.
+    * History:    V1.0 - first release
     ********************************* START LICENSE BLOCK *********************************
     * The MIT License (MIT)
     * Copyright (C) 2017 Michael Vasquez Otazu
@@ -21,27 +20,21 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function G = ImportGraph(path, filename)
+function AdjMatrix = ConvertAdjLists2AdjMatrix(G)
 
-G = graph(zeros(0,0));                                          % create empty graph
+%% Convert to Adjacency Matrix
+edgeList = G.Edges{:, {'EndNodes','Weight'}};
+nEdge = G.numedges;
+nVert = G.numnodes;
+AdjMatrix = zeros( nVert, nVert );
 
-%% OPEN FILE
-fid = fopen(strcat(path,filename));
-
-%% READ GRAPH SIZE
-m = fgets(fid);                                                 % number of nodes
-n = fgets(fid);                                                 % number of edges
-
-%% IMPORT DATA
-while ~feof(fid)                                                % read and add edges to G
-    edge = textscan(fid,'%d %d %f *[^\n]','Delimiter','\b');
-    u = edge{1}+1;
-    v = edge{2}+1;
-    w = edge{3}*100;
-    G = addedge(G, u, v, w);
+for ix = 1 : nEdge
+	vert1 = edgeList( ix, 1 );
+    vert2 = edgeList( ix, 2 );
+    AdjMatrix( vert1, vert2 ) = 1;
+	AdjMatrix( vert2, vert1 ) = 1;
 end
 
-%% CLOSE FILE
-fclose(fid);
-
 return
+
+end

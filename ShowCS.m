@@ -1,11 +1,10 @@
 %{
     ***************************************************************************************
-    * Abstract:   Import Graph from a text file using Matlab
+    * Abstract:   More detailed view of a cycle Space
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
-    * History:    V1.0 - Import a graph (undirected and weighted) from a text file 
-                  containing an adjacency list from the third line onwards.
+    * History:    V1.0 - first release
     ********************************* START LICENSE BLOCK *********************************
     * The MIT License (MIT)
     * Copyright (C) 2017 Michael Vasquez Otazu
@@ -21,27 +20,14 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function G = ImportGraph(path, filename)
+function CS_show = Show(G, CS)
 
-G = graph(zeros(0,0));                                          % create empty graph
+%% Augment CS
+CS_show = ConvertAdjMatrix2AugmentedMatrix(G, CS);
 
-%% OPEN FILE
-fid = fopen(strcat(path,filename));
-
-%% READ GRAPH SIZE
-m = fgets(fid);                                                 % number of nodes
-n = fgets(fid);                                                 % number of edges
-
-%% IMPORT DATA
-while ~feof(fid)                                                % read and add edges to G
-    edge = textscan(fid,'%d %d %f *[^\n]','Delimiter','\b');
-    u = edge{1}+1;
-    v = edge{2}+1;
-    w = edge{3}*100;
-    G = addedge(G, u, v, w);
-end
-
-%% CLOSE FILE
-fclose(fid);
+%CS_show = circshift(CS_show, [0 -rows]); % move weights at first column
+%CS_show = array2table(temp,'Cycle',{'r'+1:rows},'Vertex',{'c'+1:cols+1}); % Add labels
 
 return
+
+end

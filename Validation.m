@@ -24,7 +24,7 @@ function [m, n, newE] = Validation(E)
 
 se = size(E);                                              % size of array E
 
-%%% CHECK CONSISTENCY %%%
+%% CHECK CONSISTENCY
 if (~isnumeric(E))
   error('The array E must be numeric!') 
 end
@@ -47,9 +47,11 @@ if (se(2)<3)                                               % weight not set
   E(:,3) = 1;                                              % all weights =1
 end
 
-%%% CALCULATE RETURN VALUES %%%
+%% CALCULATE RETURN VALUES
 m = se(1);                                                 % number of nodes
 newE = E(:,1:3);                                           % edges matrix (m,3)
 n = max(max(newE(:,1:2)));                                 % number of vertexes
 
 return
+
+end

@@ -22,7 +22,7 @@
 
 function p = PlotGraph(G, opt, u, v)
 
-%%% GRAPH CUSTOM PLOT %%%
+%% GRAPH CUSTOM PLOT
 p = plot(G);
 
 if (opt == 0)

@@ -20,48 +20,32 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
+%% CLEAR WORKSPACE AND IMPORT GRAPH
 clear;
-
 path='G:\DOCUMENTS\DEVELOPMENT\C++\Graph-library\resources\';
 %filename='input_5_nonisometricA.txt';
 %filename='input_6_isometric.txt';
 %filename='input_6_depina.txt';
-filename='input_6_depina_de.txt';
-%filename='input_7_complex.txt';
+%filename='input_6_depina_de.txt';
+filename='input_7_complex.txt';
 %filename='input_10_amalditriangle.txt';
 %filename='input_12_dodecahedron.txt';
 %filename='input_250_medium.txt';
 G = ImportGraph(path, filename);
 
-%%%Plot G with MST
+%% PLOT GRAPH INCLUDING MST
 p = PlotGraph(G,0,0,0);
 
-%%%Plot G with SP between u and v
+%% PLOT GRAPH INCLUDING SP(u,v)
 %%u = 1;
 %%v = G.numnodes;
 %%p = PlotGraph(G,1,u,v);
 
-%FCB = FundamentalCycleBasis(G);
+%% DETERMINE MCB
+%CS = CycleSpace(G); 
+%CS_show = ShowCS(G, CS);
 MCB = MinimumCycleBasis(G);
+[MCB_show, MCB_weight] = ShowMCB(G, MCB);
 
-%%%Detailed view of MCB
-E = G.Edges{:, {'EndNodes','Weight'}};
-En = [(1:G.numedges)',E]; 
-[rows,cols] = size(MCB); 
-MCB_show = string([MCB;(1:cols)]);
-MCB_weight = 0;
-for j = 1:cols
-    w = 0;
-    for i = 1:rows
-        if (MCB(i,j) == 1)
-            MCB_show(i,j) = strcat( '(', num2str(En(i,2)), ',',num2str(En(i,3)), ',',num2str(En(i,4)),')');
-            w = w + En(i,4);
-        end
-    end
-	MCB_show(i+1,j) = string(w);
-    MCB_weight = MCB_weight + w;
-end
-
-MCB_show = MCB_show';
-MCB_show = circshift(MCB_show, [0 -rows]);
-clear cols E En filename i j MCB p path rows w
+%% REMOVE UNNECESSARY WORKSPACE VARIABLES
+clear filename p path

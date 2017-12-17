@@ -1,11 +1,10 @@
 %{
     ***************************************************************************************
-    * Abstract:   Import Graph from a text file using Matlab
+    * Abstract:   More detailed view of a Minimum Cycle Basis
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
-    * History:    V1.0 - Import a graph (undirected and weighted) from a text file 
-                  containing an adjacency list from the third line onwards.
+    * History:    V1.0 - first release
     ********************************* START LICENSE BLOCK *********************************
     * The MIT License (MIT)
     * Copyright (C) 2017 Michael Vasquez Otazu
@@ -21,27 +20,22 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function G = ImportGraph(path, filename)
+function [MCB_show, MCB_weight] = ShowMCB(G, MCB)
 
-G = graph(zeros(0,0));                                          % create empty graph
+%% Augment MCB matrix
+AugMatrix = ConvertAdjMatrix2AugmentedMatrix(G, MCB);
+MCB_show = AugMatrix;
+MCB_weight = sum(AugMatrix(:,end));
+%MCB_show = circshift(MCB_show, [0 -rows]); % move weights at first column
 
-%% OPEN FILE
-fid = fopen(strcat(path,filename));
-
-%% READ GRAPH SIZE
-m = fgets(fid);                                                 % number of nodes
-n = fgets(fid);                                                 % number of edges
-
-%% IMPORT DATA
-while ~feof(fid)                                                % read and add edges to G
-    edge = textscan(fid,'%d %d %f *[^\n]','Delimiter','\b');
-    u = edge{1}+1;
-    v = edge{2}+1;
-    w = edge{3}*100;
-    G = addedge(G, u, v, w);
-end
-
-%% CLOSE FILE
-fclose(fid);
+%% Add labels
+rowNames = {};
+colNames = {};
+[rows,cols] = size(MCB_show);
+rowNames = {}; for i = 1:rows, rowNames{end+1} = strcat('Cycle',num2str(i)); end;
+colNames = {}; for j = 1:cols-1, colNames{end+1} = strcat('Edge',num2str(j)); end; colNames{end+1} = 'Weight';
+MCB_show = array2table(MCB_show,'RowNames',rowNames,'VariableNames',colNames); % Add labels
 
 return
+
+end

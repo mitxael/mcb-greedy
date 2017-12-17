@@ -22,33 +22,15 @@
 
 function MCB = MinimumCycleBasis(G)
 
-%%% DATA PREPARATION %%%
-E = G.Edges{:, {'EndNodes','Weight'}};
-MST = MinSpanningTree(E);
-E = sort(E(:,1:2)')';                                   % only number of vertexes
-m = size(E,1);                                          % number of edges
-n = max(max(E));                                        % number of vertexes
-Erest = E(setdiff([1:m],MST),:);                        % rested edges
-nr = m-n+1;                                             % number of elements in cycle basis
-MCB = zeros(m,nr);                                     % array for cycles
+%% Determine CycleSpace
+CS = CycleSpace(G);
 
-%%% ADD CYCLES TO BASIS %%%
-for k1=1:nr                                             % we add one independent cycle
-  Ecurr = [E(MST,:);Erest(k1,:)];                       % spanning tree + one edge
-  A = zeros(n);
-  A((Ecurr(:,1)-1)*n+Ecurr(:,2))=1;
-  A = A+A';                                             % connectivity matrix
-  p = sum(A);                                           % the vertexes power
-  nv = [1:n];                                           % numbers of vertexes
-  while any(p==1)                                       % Delete all tails
-    nc = find(p>1);                                     % rested vertexes
-    A = A(nc,nc);                                       % new connectivity matrix
-    nv = nv(nc);                                        % rested numbers of vertexes
-    p = sum(A);                                         % new powers
-  end
-  [i1,j1] = find(A);
-  incedg = nv(unique(sort([i1 j1]')','rows'));          % included edges
-  MCB(:,k1) = ismember(E,incedg,'rows');                % current column
-end
+%% Convert to a Weight-Sorted Matrix with egdes
+AugMatrix = ConvertAdjMatrix2AugmentedMatrix(G, CS);
+AugMatrix(:,end) = [];
+
+%% Determine the minimal linear-independent set of cycles
+[MCB,MCB_idx] = Lindependent(AugMatrix'); % Invert because linear-independence is on columns
+MCB = MCB'; % Re-invert cycles to rows
 
 return

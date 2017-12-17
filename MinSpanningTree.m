@@ -22,14 +22,13 @@
 
 function MST = MinSpanningTree(E)
 
-%%% DATA VALIDATION %%%
+%% DATA VALIDATION
 if nargin < 1
   error('There is no input data!')
 end
-
 [m, n, E] = Validation(E);              % new "validated" E
 
-%%% DATA PREPARATION %%%
+%% DATA PREPARATION
 En = [(1:m)',E];                        % add the numbers
 En(:,2:3) = sort(En(:,2:3)')';          % edges on increase order
 ln = find(En(:,2)==En(:,3));            % the loops numbers
@@ -37,7 +36,7 @@ En = En(setdiff([1:size(En,1)]',ln),:); % remove the loops
 [w,iw] = sort(En(:,4));                 % sort by weight in non-increasing order
 Ens = En(iw,:);                         % sorted edges
 
-%%% BUILD GREEDY MST %%%
+%% BUILD GREEDY MST
 Emst = Ens(1,:);                        % 1st edge include to minimal spanning tree
 Ens = Ens(2:end,:);                     % rested edges
 while (size(Emst,1)<n-1)&&(~isempty(Ens))
@@ -51,6 +50,9 @@ end
 MST = Emst(:,1);                        % vector of numbers of edges
 return
 
+end
+
+%% IsCycle?
 function ic = IsCycle(E)                % true, if graph E have cycle
 n = max(max(E));                        % number of vertexes
 A = zeros(n);
@@ -68,3 +70,4 @@ while any(p <= 1)                       % remove all tails
 end
 ic = true;
 return
+end
