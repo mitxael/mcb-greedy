@@ -20,16 +20,24 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function p = PlotGraph(G, opt, u, v)
+function p = PlotGraph(G, u, v)
 
 %% GRAPH CUSTOM PLOT
 p = plot(G);
 
-if (opt == 0)
+if (nargin < 2)
     [T,q] = minspantree(G);
+elseif (nargin < 3)
+    disp('One node is missing for the shortest path');
 else
-    T = shortestpath(G, u, v, 'Method', 'positive');
-    disp(T);
+    if (u < 1 | v < 1)
+        disp('Source and destination nodes must be positive');
+    elseif (u == v )
+        disp('Source and destination nodes must be different');
+    else % u and v are consistent
+        T = shortestpath(G, u, v, 'Method', 'positive');
+        disp(T);
+    end
 end
 
 if (numnodes(G) <= 20)

@@ -23,23 +23,14 @@
 %% CLEAR WORKSPACE AND IMPORT GRAPH
 clear;
 path='G:\DOCUMENTS\DEVELOPMENT\C++\Graph-library\resources\';
-%filename='input_5_nonisometricA.txt';
-%filename='input_6_isometric.txt';
-%filename='input_6_depina.txt';
-%filename='input_6_depina_de.txt';
 filename='input_7_complex.txt';
-%filename='input_10_amalditriangle.txt';
-%filename='input_12_dodecahedron.txt';
-%filename='input_250_medium.txt';
 G = ImportGraph(path, filename);
 
 %% PLOT GRAPH INCLUDING MST
-p = PlotGraph(G,0,0,0);
+p = PlotGraph(G);
 
-%% PLOT GRAPH INCLUDING SP(u,v)
-%%u = 1;
-%%v = G.numnodes;
-%%p = PlotGraph(G,1,u,v);
+%% PLOT GRAPH INCLUDING SP(u,v) e.g. 3,G.numnodes
+%%p = PlotGraph(G,3,G.numnodes);
 
 %% DETERMINE MCB
 %CS = CycleSpace(G); 
@@ -48,4 +39,4 @@ MCB = MinimumCycleBasis(G);
 [MCB_show, MCB_weight] = ShowMCB(G, MCB);
 
 %% REMOVE UNNECESSARY WORKSPACE VARIABLES
-clear filename p path
+clear filename path p
