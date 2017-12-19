@@ -1,3 +1,7 @@
+<p align="left">
+<img width="660" height="328" src="https://github.com/mitxael/mcb-greedy/blob/master/screenshots/input_hypercube_16.png">
+</p>
+    
     ***************************************************************************************
     * Abstract:   Determine Minimal Cycle Basis of an imported Graph
     * Uses:       This library has been compiled using Matlab R2017b
