@@ -37,9 +37,10 @@ B = zeros( 0, nVert );
 limit = nVert;
 cycleCount = zeros( 1, nVert );
 
-%% Generate all unique triples of connected vertices which have
-%   indices v1 < v2 < v3 and connections v2 - v1 - v3, then 
-%   search for paths which connect v2 to v3
+%% Generate all unique triples of connected vertices which have:
+%   indices v1 < v2 < v3 and connections v2 - v1 - v3
+% After then search for paths which connect v2 to v3
+% *(No cycles are repeated due to the "ordered processing")
 for ix = 1 : nVert - 2                      % v1
     for jx = ix + 1 : nVert - 1             % v2
         if ( A( ix, jx ) == 1 )             % there's an edge (v1,v2)

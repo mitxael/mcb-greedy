@@ -1,6 +1,6 @@
 %{
     ***************************************************************************************
-    * Abstract:   Get a linearly independent set of columns from a matrix X
+    * Abstract:   Returns Adjacency Lists from an Adjacency Matrix
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
@@ -20,48 +20,40 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function [Xsub,Xidx] = Lindependent(X,tol)
- 
-%% Check if X has no non-zeros and hence no independent columns
-if ~nnz(X)
-     Xsub=[]; Xidx=[];
-     return
- end
- 
-%%  Set tol, the rank estimation tolerance (default=1e-10)
-if nargin<2, tol=1e-10; end
+function AugAdjList = ConvertAdjMatrix2AugmentedAdjList(G, AdjMatrix)
 
-%% Orthogonal-triangular-decomposition so that  X*E = Q*R
-% Unitary Q, Upper-triangular R, Permutation E
-[Q, R, E] = qr(X,0); 
+%% NAIVE METHOD
+%{
+[ii, jj] = find(AdjMatrix); % row and col indices of connections
+temp = accumarray(ii, jj , [], @(x){sort(x.')}); % get all nodes connected to each node, sorted.
+AdjLists = temp;
+%}
 
-%% Estimate the rank of the independent set
-if ~isvector(R)
-	diagr = abs(diag(R)); % Diagonal matrix of R (with ABSolute values)
-else
-	diagr = R(1);   
-end
-r = find(diagr >= tol*diagr(1), 1, 'last');
+%% PREPARE DATA
+E = G.Edges{:, {'EndNodes','Weight'}};
+%En = [(1:G.numedges)',E]; 
+[AM_rows,AM_cols] = size(AdjMatrix); 
+AdjList = zeros(AM_rows,G.numedges+1);
+[AL_rows,AL_cols] = size(AdjList); 
 
-%% Select linearly-independent columns
-[rows, cols] = size(X);
-elemN = 1;
-idx = 1;
-Xsub = zeros(rows,0);
-Xidx = [];
-while (elemN < r & idx < cols)
-    if R(rows, idx) == 0
-        tmp = X(:,idx);
-        Xsub = [Xsub tmp];
-        Xidx = [Xidx idx];
-        elemN = elemN + 1;
+%% SET WEIGHTS
+for i = 1:AM_rows
+    w = 0;
+    for j = 1:AM_cols
+        if ( AdjMatrix(i,j) > 0 )
+            u = j;
+            v = AdjMatrix(i,j);
+            idx = find( ((E(:,1)==u) & (E(:,2)==v)) | ((E(:,1)==v) & (E(:,2)==u)) );
+            AdjList(i,idx) = 1;
+            w = w + E(idx,3);
+        end
     end
-    idx = idx + 1;
+    AdjList(i,AL_cols) = w;
 end
 
-%Xidx = sort(E(1:r));
-%Xsub = X(:,Xidx);
-
+%% SORT AUGMENTED MATRIX BY WEIGHT IN NON-INCREASING ORDER
+AdjList_sorted = sortrows(AdjList, AL_cols);
+AugAdjList = AdjList_sorted;
 return
 
 end

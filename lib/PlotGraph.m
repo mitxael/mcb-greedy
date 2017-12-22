@@ -28,15 +28,21 @@ p = plot(G);
 if (nargin < 2)
     [T,q] = minspantree(G);
 elseif (nargin < 3)
-    disp('One node is missing for the shortest path');
-else
-    if (u < 1 | v < 1)
+    if (u > 0)
+        T = shortestpathtree(G, u);
+    else
         disp('Source and destination nodes must be positive');
-    elseif (u == v )
-        disp('Source and destination nodes must be different');
-    else % u and v are consistent
-        T = shortestpath(G, u, v, 'Method', 'positive');
-        disp(T);
+    end
+else % nargin >=3
+    if (v > 0)
+        if (u ~= v )
+            T = shortestpathtree(G, u, v);
+            %T = shortestpath(G, u, v, 'Method', 'positive'); % Dijkstra
+        else % u == v
+            T = shortestpathtree(G, u);
+        end
+    else
+        disp('Source and destination nodes must be positive');
     end
 end
 

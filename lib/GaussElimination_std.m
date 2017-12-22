@@ -1,6 +1,6 @@
 %{
     ***************************************************************************************
-    * Abstract:   More detailed view of a Minimum Cycle Basis
+    * Abstract:   Get a linearly independent set of columns from a matrix X
     * Uses:       This file has been compiled using Matlab R2017b
     * Author:     Michael Vasquez Otazu
     * Email:      mitxael@hotmail.it
@@ -20,20 +20,52 @@
     ********************************** END LICENSE BLOCK **********************************
 %}
 
-function [MCB_show, MCB_weight] = ShowMCB(G, MCB)
+function [Xsub,Xidx] = GaussElimination_std(G, X, tol)
+ 
+%% Check if X has no non-zeros and hence no independent columns
+if ~nnz(X)
+     Xsub=[]; Xidx=[];
+     return
+ end
+ 
+%%  Set tol, the rank estimation tolerance (default=1e-10)
+if nargin<3, tol=1e-10; end
 
-%% Augment MCB matrix
-MCB_show = MCB;
-MCB_weight = sum(MCB_show(:,end));
-%MCB_show = circshift(MCB_show, [0 -rows]); % move weights at first column
+%% Orthogonal-triangular-decomposition so that  X*E = Q*R
+% Unitary Q, Upper-triangular R, Permutation E
+[Q, R, E] = qr(X,0); 
 
-%% Add labels
-rowNames = {};
-colNames = {};
-[rows,cols] = size(MCB_show);
-rowNames = {}; for i = 1:rows, rowNames{end+1} = strcat('Cycle',num2str(i)); end;
-colNames = {}; for j = 1:cols-1, colNames{end+1} = strcat('Edge',num2str(j)); end; colNames{end+1} = 'Weight';
-MCB_show = array2table(MCB_show,'RowNames',rowNames,'VariableNames',colNames); % Add labels
+%% Set the dimension "v" of the Cycle Basis
+v = G.numedges - G.numnodes + 1;
+% This value can be also calculated as the "rank of the independent set"
+%{
+if ~isvector(R)
+	diagr = abs(diag(R)); % Diagonal matrix of R (with ABSolute values)
+else
+	diagr = R(1);   
+end
+r = [find(diagr >= tol*diagr(1), 1, 'last')] -1 ;
+%}
+
+%% Select linearly-independent columns
+[X_rows, X_cols] = size(X);
+[R_rows, R_cols] = size(R);
+elemN = 0;
+idx = 1;
+Xsub = zeros(X_rows,0);
+Xidx = [];
+while (elemN < v & idx < X_cols)
+    if R(R_rows, idx) == 0
+        tmp = X(:,idx);
+        Xsub = [Xsub tmp];
+        Xidx = [Xidx idx];
+        elemN = elemN + 1;
+    end
+    idx = idx + 1;
+end
+
+%Xidx = sort(E(1:r));
+%Xsub = X(:,Xidx);
 
 return
 

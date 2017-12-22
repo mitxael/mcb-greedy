@@ -23,18 +23,35 @@
 %% CLEAR WORKSPACE AND IMPORT GRAPH
 clear;
 path='G:\DOCUMENTS\DEVELOPMENT\C++\Graph-library\resources\';
-filename='input_7_complex.txt';
+%filename='input_5_tiny.txt';
+%filename='input_5_nonisometricA.txt';
+%filename='input_6_isometric.txt';
+%filename='input_6_depina.txt';
+filename='input_6_depina_de.txt';
+%filename='input_7_complex.txt';
+%filename='input_10_amalditriangle.txt';
+%filename='input_12_dodecahedron.txt';
+%filename='input_hypercube_8.txt';
+%filename='input_hypercube_16.txt';
+%filename='input_random_10.txt';
+%filename='input_size-small_8.txt';
 G = ImportGraph(path, filename);
 
 %% PLOT GRAPH INCLUDING MST
-p = PlotGraph(G);
+p = PlotGraph(G, 1);
 
 %% PLOT GRAPH INCLUDING SP(u,v) e.g. 3,G.numnodes
 %%p = PlotGraph(G,3,G.numnodes);
 
-%% DETERMINE MCB
-%CS = CycleSpace(G); 
-%CS_show = ShowCS(G, CS);
+%% DETERMINE CYCLE SPACE
+CS = CycleSpace(G); 
+CS_show = ShowCS(G, CS);
+
+%% DETERMINE A FUNDAMENTAL CYCLE BASIS
+%FCB = FundamentalCycleBasis_v1(G);
+%[FCB_show, FCB_weight] = ShowFCB(G, FCB);
+
+%% DETERMINE THE MINIMUM CYCLE BASIS
 MCB = MinimumCycleBasis(G);
 [MCB_show, MCB_weight] = ShowMCB(G, MCB);
 
